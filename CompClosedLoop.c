@@ -1,8 +1,13 @@
+#pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, dgtl1,  elevBottom,     sensorTouch)
-#pragma config(Motor,  port2,           frontRight,    tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port3,           backRight,     tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port4,           frontLeft,     tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port5,           backLeft,      tmotorVex393_MC29, openLoop)
+#pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Sensor, I2C_3,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Sensor, I2C_4,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
+#pragma config(Motor,  port2,           frontRight,    tmotorVex393_MC29, PIDControl, encoderPort, I2C_1)
+#pragma config(Motor,  port3,           backRight,     tmotorVex393_MC29, PIDControl, encoderPort, I2C_2)
+#pragma config(Motor,  port4,           frontLeft,     tmotorVex393_MC29, PIDControl, encoderPort, I2C_4)
+#pragma config(Motor,  port5,           backLeft,      tmotorVex393_MC29, PIDControl, encoderPort, I2C_3)
 #pragma config(Motor,  port6,           rightElevator, tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port7,           leftElevator,  tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           claw,          tmotorVex393_MC29, openLoop)
@@ -36,6 +41,7 @@ Motor Port 8        claw                VEX Motor 393         Claw motor
 #pragma userControlDuration(120)
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
+#include "AutonomousFunctions.c"
 
 //Global variables
 
@@ -85,8 +91,7 @@ task usercontrol()
 	while (true)
 	{
 
-	// Drive commands.
-
+		// Drive commands.
 		frontRightMotorSpeed = - vexRT[Ch3] + vexRT[Ch4] + vexRT[Ch1];
     backRightMotorSpeed = - vexRT[Ch3]  - vexRT[Ch4] + vexRT[Ch1];
     frontLeftMotorSpeed =  vexRT[Ch3] - vexRT[Ch4] + vexRT[Ch1];
