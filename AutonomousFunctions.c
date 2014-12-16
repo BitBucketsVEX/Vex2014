@@ -3,24 +3,41 @@
 
 // The following variables are used by these functions and should be mapped
 // using these variables in the pragmas in the calling program:
-//		leftEncoder <- Left front drive motor encoder.
-//    rightEncoder <- Right front drive motor encoder.
-// 		leftFrontMotor <- Left front drive motor.
-//		leftRearMotor <- Left rear drive motor.
-//		rightFrontMotor <- Right front drive motor.
-//		rightRearMotor <- Right rear drive motor.
-//		armEncoder <- Encoder on the arm motor.
-//    armMotor <- Arm raising/lowering motor.
-// 		extensionEncoder <- Encoder on the left extension motor.
-//		leftExtendMotor <- Left arm extension motor.
-//		rightExtendMotor <- Right arm extension motor.
-//		clawMotor <- Claw open/close motor.
-//		wristPot <- Potentiometer on the wrist motor.
-//		wristMotor <- Wrist motor that the claw is mounted on.
+// 		frontLeft <- Left front drive motor and encoder.
+//		backLeft <- Left rear drive motor and encoder.
+//		frontRight <- Right front drive motor and encoder.
+//		backRight <- Right rear drive motor and encoder.
+//		leftElevator <- Left primary elevator motor.
+//		leftElevator2 <- Left secondary elevator motor.
+//		rightElevator <- Right primary elevator motor.
+//		rightElevator2 <- Right secondary elevator motor.
+//    grabberLeft <- Left grabber motor.
+//    grabberRight <- Right grabber motor.
 
 // TODO - These functions shouldn't depend on pragmas defined externally.
 //        It makes the library functions dependent on the calling program.
 //        (Very bad software engineering practice...functions should be decoupled.)
+
+// TODO - Many of these functions are inverses of each other (like moveForward and
+//        moveBackward), so they could be combined into single functions with a direction
+//        flag to indicate the signs for the motors.
+
+// UTILITY FUNCTIONS
+
+// Determine the maximum of four absolute values.
+int maxOfFour(int value1, int value2, int value3, int value4) {
+	int max = abs(value1);
+	if (max < abs(value2)) {
+		max = value2;
+	}
+	if (max < abs(value3)) {
+		max = value3;
+	}
+	if (max < abs(value4)) {
+		max = value4;
+	}
+	return max;
+}
 
 // DRIVE COMMANDS
 
@@ -48,44 +65,23 @@ void stopRobot() {
 // given speed.
 void moveForward(int encoderCounts, int speed) {
 
-	//Clear the encoders before using them
+	// Clear the encoders before using them.
 	clearMotorEncoders();
-/*
-	//While both of the encoders are less than the specified amount
-	while(SensorValue[rightEncoder] < encoderCounts)
-	{
-		//If the two encoder values are equal
-		if(abs(SensorValue[rightEncoder]) == abs(SensorValue[leftEncoder]))
-		{
-			//Move the robot forward at the specified speed
-			motor[rightRearMotor] = speed;
-			motor[rightFrontMotor] = speed;
-			motor[leftRearMotor] = speed;
-			motor[leftFrontMotor] = speed;
-		}
 
-		//If the right encoder is greater than the left encoder (veering to the left)
-		else if(abs(SensorValue[rightEncoder]) > abs(SensorValue[leftEncoder]))
-		{
-			//Adjust the robot slightly to the right
-			motor[rightRearMotor] = speed;
-			motor[rightFrontMotor] = speed;
-			motor[leftRearMotor] = speed + 10;
-			motor[leftFrontMotor] = speed + 10;
-		}
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
 
-		//If the left encoder is greater than the right encoder (veering to the right)
-		else if(abs(SensorValue[rightEncoder]) < abs(SensorValue[leftEncoder]))
-		{
-			//Adjust the robot slightly to the right
-			motor[rightRearMotor] = speed + 10;
-			motor[rightFrontMotor] = speed + 10;
-			motor[leftRearMotor] = speed;
-			motor[leftFrontMotor] = speed;
-		}
+		// TODO - Verify that motor signs are correct.
+
+		// Move the robot forward at the specified speed.
+		motor[frontRight] = speed;
+		motor[backRight] = speed;
+		motor[frontLeft] = -speed;
+		motor[backLeft] = -speed;
 	}
-*/
-	//Stop the robot
+	// Stop the robot.
 	stopRobot();
 }
 
@@ -93,199 +89,138 @@ void moveForward(int encoderCounts, int speed) {
 // given speed.
 void moveBackward(int encoderCounts, int speed) {
 
-	//Clear the encoders before using them
+	// Clear the encoders before using them.
 	clearMotorEncoders();
-	/*
 
-	//While both of the encoders are less than the specified amount
-	while(abs(SensorValue[rightEncoder]) < encoderCounts)
-	{
-		//If the two encoder values are equal
-		if(abs(SensorValue[rightEncoder]) == abs(SensorValue[leftEncoder]))
-		{
-			//Move the robot forward at the specified speed
-			motor[rightRearMotor] = -speed;
-			motor[rightFrontMotor] = -speed;
-			motor[leftRearMotor] = -speed;
-			motor[leftFrontMotor] = -speed;
-		}
+	// TODO - Add code here to make robot move backwards.
 
-		//If the right encoder is greater than the left encoder (veering to the left)
-		else if(abs(SensorValue[rightEncoder]) > abs(SensorValue[leftEncoder]))
-		{
-			//Adjust the robot slightly to the right
-			motor[rightRearMotor] = -speed;
-			motor[rightFrontMotor] = -speed;
-			motor[leftRearMotor] = -speed - 10;
-			motor[leftFrontMotor] = -speed - 10;
-		}
-
-		//If the left encoder is greater than the right encoder (veering to the right)
-		else if(abs(SensorValue[rightEncoder]) < abs(SensorValue[leftEncoder]))
-		{
-			//Adjust the robot slightly to the right
-			motor[rightRearMotor] = -speed - 10;
-			motor[rightFrontMotor] = -speed - 10;
-			motor[leftRearMotor] = -speed;
-			motor[leftFrontMotor] = -speed;
-		}
-	}
-*/
-	//Stop the robot
+	// Stop the robot.
 	stopRobot();
 }
 
-/*
-//Turn the robot left for the specified encoder counts
-//at a specified speed
-void turnLeft(int encoderCounts, int speed)
-{
-	//Clear the encoders before using them
+// Translate to the left for the specified encoder counts and speed.
+void translateLeft(int encoderCounts, int speed) {
+
+	// Clear the encoders before using them.
 	clearMotorEncoders();
 
-	//While the absolute value of the right motor's encoder is less
-	//than the specified amount
-	//while(abs(SensorValue[rightEncoder]) < encoderCounts)
-	{
-		//Turn the robot to the left at the specified speed
-		motor[rightRearMotor] = speed;
-		motor[rightFrontMotor] = speed;
-		motor[leftRearMotor] = -speed;
-		motor[leftFrontMotor] = -speed;
-	}
+	// TODO - Add code here to translate to the left.
 
-	//Stop the robot
+	// Stop the robot.
 	stopRobot();
 }
 
-//Turn the robot right for the specified encoder counts
-//at a specified speed
-void turnRight(int encoderCounts, int speed)
-{
-	//Clear the encoders
-	clearMotorEncoders();
-	//While the absolute value of the left motor's encoder is less
-	//than the specified amount
-	while(abs(SensorValue[leftEncoder]) < encoderCounts)
-	{
-		//Turn the robot to the right at the specified speed
-		motor[rightRearMotor] = -speed;
-		motor[rightFrontMotor] = -speed;
-		motor[leftRearMotor] = speed;
-		motor[leftFrontMotor] = speed;
-	}
+// Translate to the right for the specified encoder counts and speed.
+void translateRight(int encoderCounts, int speed) {
 
-	//Stop the robot
+	// Clear the encoders before using them.
+	clearMotorEncoders();
+
+	// TODO - Add code here to translate to the right.
+
+	// Stop the robot.
 	stopRobot();
 }
+
+// Rotate clockwise for the specified number of encoder counts and speed.
+void rotateClockwise(int encoderCounts, int speed) {
+
+	// Clear the encoders before using them.
+	clearMotorEncoders();
+
+	// TODO - Add code here to rotate the robot clockwise.
+
+	// Stop the robot.
+	stopRobot();
+
+}
+
+// Rotate counterclockwise for the specified number of encoder counts and speed.
+void rotateCounterClockwise(int encoderCounts, int speed) {
+
+	// Clear the encoders before using them.
+	clearMotorEncoders();
+
+	// TODO - Add code here to rotate the robot counterclockwise.
+
+	// Stop the robot.
+	stopRobot();
+
+}
+
 
 // ACTUATOR FUNCTIONS
-// Raise the arm the specified angle at the given speed.
-void raiseArm(int angle, int speed) {
 
-	// Clear the arm encoder.
-	SensorValue[armEncoder] = 0;
+// Stop the elevator motors.
+void stopElevatorMotors() {
 
-	// Rotate the arm by the specified number of degrees.
-	// This only works for the shaft encoder because it has 360 ticks per rotation.
-	while (abs(SensorValue[armEncoder]) < angle) {
-		motor[armMotor] = speed;
-	}
-
-	// Stop motor.
-	motor[armMotor] = 0;
-}
-
-// Lower the arm the specified angle at the given speed.
-void lowerArm(int angle, int speed) {
-
-	// Clear the arm encoder.
-	SensorValue[armEncoder] = 0;
-
-	// Rotate the arm by the specified number of degrees.
-	// This only works for the shaft encoder because it has 360 ticks per rotation.
-	while (abs(SensorValue[armEncoder]) < angle) {
-		motor[armMotor] = -speed;
-	}
-	// Stop motor.
-	motor[armMotor] = 0;
-}
-
-// Stop the arm extension motors.
-void stopExtendMotors() {
-
-	motor[leftExtendMotor] = 0;
-  motor[rightExtendMotor] = 0;
+	motor[leftElevator] = 0;
+	motor[leftElevator2] = 0;
+	motor[rightElevator] = 0;
+	motor[rightElevator2] = 0;
 
 }
 
-// Extend the arm the specified distance at the given speed.
-void extendArm(int distance, int speed) {
+// Raise the elevator for the specified duration and speed.
+// (Duration is specified in milliseconds.)
+void raiseElevator(int duration, int speed) {
 
-	// Clear the encoder.
-  SensorValue[extensionEncoder] = 0;
+	// TODO - Verify the signs are correct for the motor speeds.
 
-  // Extend the arm until it has extended the distance specified.
-  while (abs(SensorValue[extensionEncoder]) < distance) {
-  	motor[leftExtendMotor] = speed;
-  	motor[rightExtendMotor] = speed;
-  }
+  // Start motors at specified speed.
+	motor[leftElevator] = speed;
+	motor[leftElevator2] = speed;
+	motor[rightElevator] = speed;
+	motor[rightElevator2] = speed;
 
-  // Stop extend motors.
-	stopExtendMotors();
+	// Wait for the specified duration.
+	wait1Msec(duration);
+
+	// Stop the motors.
+	stopElevatorMotors();
+}
+
+// Lower the elevator for the specified duration and speed.
+// (Duration is specified in milliseconds.)
+void lowerElevator(int duration, int speed) {
+
+	// TODO - Insert code here to lower the elevator.
+
+	// Stop the motors.
+	stopElevatorMotors();
+}
+
+// Stop the grabber motors.
+void stopGrabberMotors() {
+	motor[grabberLeft] = 0;
+	motor[grabberRight] = 0;
+}
+
+// Grab an object for the specified duration and speed.
+// (Duration specified in milliseconds.)
+void grab(int duration, int speed) {
+
+	// TODO - Verify that the signs are correct for the motor speeds.
+
+	// Start the grabber motor to grab an object.
+	motor[grabberLeft] = speed;
+	motor[grabberRight] = speed;
+
+	// Wait for the specified duration.
+	wait1Msec(duration);
+
+	// Stop the grabber motors.
+	stopGrabberMotors();
 
 }
 
-// Retract the arm the specified distance at the given speed.
-void retractArm(int distance, int speed) {
+// Release an object for the specified duration and speed.
+// (Duration specified in milliseconds.)
+void release(int duration, int speed) {
 
-	// Clear the encoder.
-  SensorValue[extensionEncoder] = 0;
+	// TODO - Insert code here to release an object from the grabber.
 
-  // Retract the arm until it has retracted the distance specified.
-  while (abs(SensorValue[extensionEncoder]) < distance) {
-  	motor[leftExtendMotor] = -speed;
-  	motor[rightExtendMotor] = -speed;
-  }
-
-  // Stop extend motors.
-	stopExtendMotors();
+// Stop the grabber motors.
+	stopGrabberMotors();
 
 }
-
-// Stop the claw.
-void stopClaw() {
-	motor[clawMotor] = 0;
-}
-
-// Open the claw at the given speed for the specified duration.
-// (Duration is in milliseconds.)
-void openClaw(int speed, int duration) {
-	for (int i = 0; i < duration; i++) {
-		motor[clawMotor] = speed;
-		wait1Msec(1);
-	}
-	stopClaw();
-}
-
-// Close the claw at the given speed for the specified duration.
-// (Duration is in milliseconds.)
-void closeClaw(int speed, int duration) {
-	for (int i = 0; i < duration; i++) {
-		motor[clawMotor] = -speed;
-		wait1Msec(1);
-	}
-	stopClaw();
-}
-
-// Rotate the wrist to the desired position at the indicated speed.
-void rotateWrist(int position, int speed) {
-	if (position < abs(SensorValue[wristPot])) {
-		motor[wristMotor] = speed;
-	} else if (position > abs(SensorValue[wristPot])) {
-		motor[wristMotor] = -speed;
-	} else {
-		motor[wristMotor] = 0;
-	}
-}
-*/
