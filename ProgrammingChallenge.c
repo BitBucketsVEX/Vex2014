@@ -19,7 +19,7 @@
 #pragma platform(VEX)
 
 /*+++++++++++++++++++++++++++++++++++++++++++++| Notes |++++++++++++++++++++++++++++++++++++++++++++++
-CompAutonomous.c
+ProgrammingChallenge.c
 - Basic driver control program for 2014 VEX omni drive base.
 - The left joystick Y-axis controls the robot's forward and backward movement.
 - The left joystick X-axis controls the robot's left and right movement.
@@ -44,8 +44,8 @@ Motor Port 10				rightElevator2 			VEX Motor 393 				Right Elevator secondary mo
 
 //Competition Control and Duration Settings
 #pragma competitionControl(Competition)
-#pragma autonomousDuration(20)    // This is longer than 15 seconds to include external timer padding.
-#pragma userControlDuration(120)  // This is longer than 105 seconds to include external timer padding.
+#pragma autonomousDuration(75)  // This is longer than 60 seconds to include external timer padding.
+#pragma userControlDuration(0)  // There is no user-controlled portion of the Programming Challenge.
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 #include "AutonomousFunctions.c"
@@ -79,49 +79,7 @@ task autonomous()
 // Task for the driver controlled portion of the competition.
 task usercontrol()
 {
-	while (true)
-	{
 
-		// Drive commands.
-		frontRightMotorSpeed = - vexRT[Ch3] + vexRT[Ch4] + vexRT[Ch1];
-    backRightMotorSpeed = - vexRT[Ch3]  - vexRT[Ch4] + vexRT[Ch1];
-    frontLeftMotorSpeed =  vexRT[Ch3] + vexRT[Ch4] + vexRT[Ch1];
-	  backLeftMotorSpeed = vexRT[Ch3] - vexRT[Ch4] + vexRT[Ch1];
-	  motor[frontRight] = frontRightMotorSpeed;
-    motor[backRight] = backRightMotorSpeed;
-    motor[frontLeft] = frontLeftMotorSpeed;
-	  motor[backLeft] = backLeftMotorSpeed;
+	// No user-controlled code for the Programming Challenge.
 
-	  // Elevator raise/lower control.
-	  if (vexRT[Btn6U] == 1) {  // raise elevator when button 6 up pressed
-    	motor[rightElevator] = 127;
-    	motor[leftElevator] = 127;
-    	motor[leftElevator2] = 127;
-    	motor[rightElevator2] = 127;
-    } else if ((vexRT[Btn6D] == 1) && // lower elevator when button 6D pressed
-    	         (SensorValue(elevBottom) == 0)) { // and stop at limit switch
-    	motor[rightElevator] = -127;
-    	motor[leftElevator] = -127;
-    	motor[leftElevator2] = -127;
-    	motor[rightElevator2] = -127;
-
-    } else {  // turn motors off when neither button is pressed
-      motor[rightElevator] = 0;
-      motor[leftElevator] = 0;
-      motor[leftElevator2] = 0;
-    	motor[rightElevator2] = 0;
-    }
-
-    // Claw open/close control
-    if (vexRT[Btn8D] == 1) {
-    	motor[grabberRight] = 127;  // close claw
-    	motor[grabberLeft] = 127;
-    } else if(vexRT[Btn8L] == 1) {
-    	motor[grabberLeft] = -127;  // open claw
-    	motor[grabberRight] =-127;
-    } else {
-      motor[grabberRight] = 0; // turn right grabber off
-      motor[grabberLeft] = 0; //turn left grabber off
-    }
- 	}
 }
