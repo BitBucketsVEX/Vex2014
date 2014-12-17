@@ -15,6 +15,10 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++| Notes |++++++++++++++++++++++++++++++++++++++++++++++
 EncoderTest.c
 - Motor encoder test program for 2014 VEX omni drive base.
+-- The 2-wire 393 motor counts 627.2 counts per revolution in the default high torque configuration.
+-- The 2-wire 393 motor counts 392 counts per revolution in the modified high speed configuration.
+-- ROBOTC should display connected motor types and the encoder ticks in the motor debug window at
+   Robot > Debug Windows > Motors.
 
 [I/O Port]          [Name]              [Type]                [Description]
 Motor Port 2        frontRight          VEX Motor 393         Front Right motor
@@ -23,18 +27,9 @@ Motor Port 4        frontLeft           VEX Motor 393         Front Left motor
 Motor Port 5        backLeft            VEX Motor 393         Back Left motor
 ----------------------------------------------------------------------------------------------------*/
 
-//Global variables
-
-int frontLeftMotorSpeed = 0;
-int frontRightMotorSpeed = 0;
-int backRightMotorSpeed = 0;
-int backLeftMotorSpeed = 0;
-
-// Task for the driver controlled portion of the competition.
-task main()
-{
-	while (true)
-	{
+// Test the motor encoders!
+task main() {
+	while (true) {
 		// TODO - Add code to turn motors back and forth one at a time,
 		//        based on number of encoder ticks.
 	}
