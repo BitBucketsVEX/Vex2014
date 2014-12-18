@@ -1,5 +1,4 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
-#pragma config(Sensor, dgtl1,  elevBottom,     sensorTouch)
 #pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_3,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
@@ -19,6 +18,17 @@ EncoderTest.c
 -- The 2-wire 393 motor counts 392 counts per revolution in the modified high speed configuration.
 -- ROBOTC should display connected motor types and the encoder ticks in the motor debug window at
    Robot > Debug Windows > Motors.
+-- The VEX Joystick controller is used to rotate the wheels, as follows:
+--- Button 7 rotates the selected wheel 392 ticks:
+---- 7U - Left front wheel
+---- 7L - Left rear wheel
+---- 7R - Right front wheel
+---- 7D - Right rear wheel
+--- Button 8 rotates the selected wheel 627 ticks:
+---- 8U - Left front wheel
+---- 8L - Left rear wheel
+---- 8R - Right front wheel
+---- 8D - Right rear wheel
 
 [I/O Port]          [Name]              [Type]                [Description]
 Motor Port 2        frontRight          VEX Motor 393         Front Right motor
@@ -27,10 +37,89 @@ Motor Port 4        frontLeft           VEX Motor 393         Front Left motor
 Motor Port 5        backLeft            VEX Motor 393         Back Left motor
 ----------------------------------------------------------------------------------------------------*/
 
+// CONSTANTS
+#define HIGH_SPEED 392    // encoder count for one rotation of 393 motor in high speed config
+#define HIGH_TORQUE 627   // encoder count for one rotation of 393 motor in high torque config
+#define MOTOR_SPEED 50		// motor speed for rotation test
+
+// Reset drive motor encoders.
+void resetDriveMotorEncoders() {
+
+	nMotorEncoder[frontLeft] = 0;
+	nMotorEncoder[backLeft] = 0;
+	nMotorEncoder[frontRight] = 0;
+	nMotorEncoder[backRight] = 0;
+
+}
+
+// Stop motors.
+void stopMotors() {
+
+	motor[frontLeft] = 0;
+	motor[backLeft] = 0;
+	motor[frontRight] = 0;
+	motor[backRight] = 0;
+
+}
+
+// Rotate the selected wheel for the selected number of encoder ticks.
+void rotateWheel(int encoderTarget, char button) {
+
+	// Clear the motor encoders before starting the motor.
+	resetDriveMotorEncoders();
+
+	// Run the selected motor until the encoder target has been reached.
+	switch(button) {
+		case 'U' : 	motor[frontLeft] = MOTOR_SPEED;
+								while (abs(nMotorEncoder[frontLeft]) < encoderTarget) {}
+								break;
+		case 'L' :	motor[backLeft] = MOTOR_SPEED;
+								while (abs(nMotorEncoder[backLeft]) < encoderTarget) {}
+								break;
+		case 'R' :	motor[frontRight] = MOTOR_SPEED;
+								while (abs(nMotorEncoder[frontRight]) < encoderTarget) {}
+								break;
+		case 'D' : 	motor[backRight] = MOTOR_SPEED;
+								while (abs(nMotorEncoder[backRight]) < encoderTarget) {}
+								break;
+		default  :	break;
+	}
+
+	stopMotors();
+
+}
+
 // Test the motor encoders!
 task main() {
 	while (true) {
-		// TODO - Add code to turn motors back and forth one at a time,
-		//        based on number of encoder ticks.
+
+		// Check to see if a button has been pushed for high speed motor test.
+		if (vexRT[Btn7U] == 1) {
+			rotateWheel(HIGH_SPEED, 'U');
+		}
+		if (vexRT[Btn7L] == 1) {
+			rotateWheel(HIGH_SPEED, 'L');
+		}
+		if (vexRT[Btn7R] == 1) {
+			rotateWheel(HIGH_SPEED, 'R');
+		}
+		if (vexRT[Btn7D] == 1) {
+			rotateWheel(HIGH_SPEED, 'D');
+		}
+
+		// Check to see if a button has been pushed for high torque motor test.
+		if (vexRT[Btn8U] == 1) {
+			rotateWheel(HIGH_TORQUE, 'U');
+		}
+		if (vexRT[Btn8L] == 1) {
+			rotateWheel(HIGH_TORQUE, 'L');
+		}
+		if (vexRT[Btn8R] == 1) {
+			rotateWheel(HIGH_TORQUE, 'R');
+		}
+		if (vexRT[Btn8D] == 1) {
+			rotateWheel(HIGH_TORQUE, 'D');
+		}
+
 	}
 }
