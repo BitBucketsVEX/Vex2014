@@ -48,7 +48,7 @@ Motor Port 10				rightElevator2 			VEX Motor 393 				Right Elevator secondary mo
 #pragma userControlDuration(120)  // This is longer than 105 seconds to include external timer padding.
 
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
-#include "AutonomousFunctions.c"
+// #include "AutonomousFunctions.c"
 
 //Global variables
 
@@ -57,6 +57,47 @@ int frontRightMotorSpeed = 0;
 int backRightMotorSpeed = 0;
 int backLeftMotorSpeed = 0;
 
+void elevate(int speed, int time)
+{
+	// raise elevator at speed (may be negative) for time milliseconds.
+  motor[leftElevator]   = speed;
+  motor[leftElevator2]  = speed;
+  motor[rightElevator]  = speed;
+  motor[rightElevator2] = speed;
+	wait1Msec(time);
+	return;
+}
+
+void intake(int speed, int time)
+{
+	// run intake grabber at speed (may be negative) for time milliseconds.
+  motor[grabberLeft]   = speed;
+  motor[grabberRight]  = speed;
+	wait1Msec(time);
+	return;
+}
+
+void drive(int speed, int time)
+{
+	// Drive forward for time milliseconds.
+  motor[frontRight] = -speed;
+  motor[backRight]  = -speed;
+  motor[frontLeft]  =  speed;
+  motor[backLeft]   =  speed;
+	wait1Msec(time);
+	return;
+}
+void rotate(int speed, int time)
+{
+	// rotate clockwise for time milliseconds.
+  // negative is counter-clockwise.
+  motor[frontRight] = speed;
+  motor[backRight]  = speed;
+  motor[frontLeft]  = speed;
+  motor[backLeft]   = speed;
+	wait1Msec(time);
+	return;
+}
 // All activities that occur before the competition starts
 // Example: clearing encoders, setting servo positions, ...
 void pre_auton()
@@ -70,7 +111,28 @@ void pre_auton()
 // Task for the autonomous portion of the competition.
 task autonomous()
 {
-
+  drive(-127, 800);
+  drive(127, 1000);
+  drive(-127, 1000);
+  drive(127, 1000);
+  elevate(100, 1000); // goose elevator up to meet autoloaded cone
+  elevate( 0, 10);   // stop elevator
+  drive(50,200);
+  intake(100,1000);  // grab a cone while driving
+  drive(0,20);
+  intake(0,20);      // stop moving and intaking
+// temp for now
+  elevate(-100, 1000); // goose elevator up to meet autoloaded cone
+  elevate( 0, 10);   // stop elevator
+ /* elevate(50, 1000); // lift elevator up to extract cone from loader
+  elevate( 0, 10);   // stop elevator
+  drive(-127, 300);  // back up to leave autoloader lone
+  rotate(-100,600);  //turn ccw 90 degrees
+  rotate(0,10);      //stop
+  elevate(-50, 600); // elevator down to put cone in floor holder
+  elevate( 0, 10);     // stop
+  drive( 0, 15000);
+*/
 	// TODO - Call functions in AutonomousFunctions.c here.
 
 }

@@ -40,7 +40,7 @@ Motor Port 5        backLeft            VEX Motor 393         Back Left motor
 // CONSTANTS
 #define HIGH_SPEED 392    // encoder count for one rotation of 393 motor in high speed config
 #define HIGH_TORQUE 627   // encoder count for one rotation of 393 motor in high torque config
-#define MOTOR_SPEED 50		// motor speed for rotation test
+#define MOTOR_SPEED 25		// motor speed for rotation test
 
 // Reset drive motor encoders.
 void resetDriveMotorEncoders() {
