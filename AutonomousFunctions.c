@@ -24,16 +24,26 @@
 
 // UTILITY FUNCTIONS
 
+int max = 0;
+
 // Determine the maximum of four absolute values.
 int maxOfFour(int value1, int value2, int value3, int value4) {
-	int max = abs(value1);
-	if (max < abs(value2)) {
+
+  // Having to manually check signs because the RobotC abs function is not
+  // reliably returning a value greater than 0.
+  if (value1 < 0) { value1 *= -1; }
+  if (value2 < 0) { value2 *= -1; }
+  if (value3 < 0) { value3 *= -1; }
+  if (value4 < 0) { value4 *= -1; }
+
+  max = value1;
+	if (max < value2) {
 		max = value2;
 	}
-	if (max < abs(value3)) {
+	if (max < value3) {
 		max = value3;
 	}
-	if (max < abs(value4)) {
+	if (max < value4) {
 		max = value4;
 	}
 	return max;
@@ -66,21 +76,26 @@ void stopRobot() {
 void moveForward(int encoderCounts, int speed) {
 
 	// Clear the encoders before using them.
-	clearMotorEncoders();
+	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+		(nMotorEncoder[frontRight]!= 0)||(nMotorEncoder[backRight]!= 0)){
+
+		clearMotorEncoders();
+
+	}
+
 
 	// Run the motors until the specified number of encoder counts are reached.
 	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
 									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
 							< encoderCounts) {
 
-		// TODO - Verify that motor signs are correct.
-
 		// Move the robot forward at the specified speed.
-		motor[frontRight] = speed;
-		motor[backRight] = speed;
-		motor[frontLeft] = -speed;
-		motor[backLeft] = -speed;
+		motor[frontRight] = -speed;
+		motor[backRight] = -speed;
+		motor[frontLeft] = speed;
+		motor[backLeft] = speed;
 	}
+
 	// Stop the robot.
 	stopRobot();
 }
@@ -89,10 +104,27 @@ void moveForward(int encoderCounts, int speed) {
 // given speed.
 void moveBackward(int encoderCounts, int speed) {
 
-	// Clear the encoders before using them.
-	clearMotorEncoders();
 
-	// TODO - Add code here to make robot move backwards.
+
+	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
+		(nMotorEncoder[backRight]!= 0)){
+
+		// Clear the encoders before using them.
+		clearMotorEncoders();
+	}
+
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
+
+		// Move the robot forward at the specified speed.
+		motor[frontRight] = speed;
+		motor[backRight] = speed;
+		motor[frontLeft] = -speed;
+		motor[backLeft] = -speed;
+		wait1Msec(5);
+	}
 
 	// Stop the robot.
 	stopRobot();
@@ -101,10 +133,24 @@ void moveBackward(int encoderCounts, int speed) {
 // Translate to the left for the specified encoder counts and speed.
 void translateLeft(int encoderCounts, int speed) {
 
-	// Clear the encoders before using them.
-	clearMotorEncoders();
+  while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
+		(nMotorEncoder[backRight]!= 0)){
 
-	// TODO - Add code here to translate to the left.
+		// Clear the encoders before using them.
+		clearMotorEncoders();
+	}
+
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
+
+		// Move the robot forward at the specified speed.
+		motor[frontRight] = -speed;
+		motor[backRight] = speed;
+		motor[frontLeft] = -speed;
+		motor[backLeft] = speed;
+	}
 
 	// Stop the robot.
 	stopRobot();
@@ -113,10 +159,26 @@ void translateLeft(int encoderCounts, int speed) {
 // Translate to the right for the specified encoder counts and speed.
 void translateRight(int encoderCounts, int speed) {
 
-	// Clear the encoders before using them.
-	clearMotorEncoders();
 
-	// TODO - Add code here to translate to the right.
+
+	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
+		(nMotorEncoder[backRight]!= 0)){
+
+		// Clear the encoders before using them.
+		clearMotorEncoders();
+	}
+
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
+
+		// Move the robot forward at the specified speed.
+		motor[frontRight] = speed;
+		motor[backRight] = -speed;
+		motor[frontLeft] = speed;
+		motor[backLeft] = -speed;
+	}
 
 	// Stop the robot.
 	stopRobot();
@@ -125,10 +187,19 @@ void translateRight(int encoderCounts, int speed) {
 // Rotate clockwise for the specified number of encoder counts and speed.
 void rotateClockwise(int encoderCounts, int speed) {
 
-	// Clear the encoders before using them.
-	clearMotorEncoders();
 
-	// TODO - Add code here to rotate the robot clockwise.
+
+	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
+		(nMotorEncoder[backRight]!= 0)){
+
+		// Clear the encoders before using them.
+		clearMotorEncoders();
+	}
+
+	motor[frontLeft] = speed;
+	motor[frontRight] = speed;
+	motor[backRight] = - speed;
+	motor[backLeft] = -speed:
 
 	// Stop the robot.
 	stopRobot();
@@ -138,10 +209,19 @@ void rotateClockwise(int encoderCounts, int speed) {
 // Rotate counterclockwise for the specified number of encoder counts and speed.
 void rotateCounterClockwise(int encoderCounts, int speed) {
 
-	// Clear the encoders before using them.
-	clearMotorEncoders();
 
-	// TODO - Add code here to rotate the robot counterclockwise.
+
+	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
+		(nMotorEncoder[backRight]!= 0)){
+
+		// Clear the encoders before using them.
+		clearMotorEncoders();
+	}
+
+	motor[frontLeft] = -speed;
+	motor[frontRight] = -speed;
+	motor[backRight] =  speed;
+	motor[backLeft] = speed:
 
 	// Stop the robot.
 	stopRobot();
