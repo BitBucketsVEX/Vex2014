@@ -202,7 +202,7 @@ void rotateClockwise(int encoderCounts, int speed) {
 	motor[frontLeft] = speed;
 	motor[frontRight] = speed;
 	motor[backRight] = - speed;
-	motor[backLeft] = -speed:
+	motor[backLeft] = -speed;
 
 	// Stop the robot.
 	stopRobot();
@@ -224,7 +224,7 @@ void rotateCounterClockwise(int encoderCounts, int speed) {
 	motor[frontLeft] = -speed;
 	motor[frontRight] = -speed;
 	motor[backRight] =  speed;
-	motor[backLeft] = speed:
+	motor[backLeft] = speed;
 
 	// Stop the robot.
 	stopRobot();
