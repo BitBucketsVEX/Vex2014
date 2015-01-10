@@ -76,6 +76,7 @@ task autonomous()
 	moveForward(1100, 100);
 	translateRight(800, 100);
 	moveBackward(950, 100);
+	moveForward(100, 100);
 }
 
 // Task for the driver controlled portion of the competition.
