@@ -72,9 +72,9 @@ task autonomous()
 {
 	moveForward(500, 127);
 	moveBackward(100, 100);
-	translateRight(800, 100);
-	moveForward(1100, 100);
 	translateLeft(800, 100);
+	moveForward(1100, 100);
+	translateRight(800, 100);
 	moveBackward(950, 100);
 }
 
