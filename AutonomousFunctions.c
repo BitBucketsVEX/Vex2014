@@ -77,7 +77,7 @@ void moveForward(int encoderCounts, int speed) {
 
 	// Clear the encoders before using them.
 	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
-		(nMotorEncoder[frontRight]!= 0)||(nMotorEncoder[backRight]!= 0)){
+		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)) {
 
 		clearMotorEncoders();
 
@@ -106,11 +106,12 @@ void moveBackward(int encoderCounts, int speed) {
 
 
 
-	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
-		(nMotorEncoder[backRight]!= 0)){
+	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)) {
 
 		// Clear the encoders before using them.
 		clearMotorEncoders();
+
 	}
 
 	// Run the motors until the specified number of encoder counts are reached.
@@ -133,11 +134,12 @@ void moveBackward(int encoderCounts, int speed) {
 // Translate to the left for the specified encoder counts and speed.
 void translateLeft(int encoderCounts, int speed) {
 
-  while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
-		(nMotorEncoder[backRight]!= 0)){
+  while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+  	(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)) {
 
 		// Clear the encoders before using them.
 		clearMotorEncoders();
+
 	}
 
 	// Run the motors until the specified number of encoder counts are reached.
@@ -161,11 +163,12 @@ void translateRight(int encoderCounts, int speed) {
 
 
 
-	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
-		(nMotorEncoder[backRight]!= 0)){
+	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)) {
 
 		// Clear the encoders before using them.
 		clearMotorEncoders();
+
 	}
 
 	// Run the motors until the specified number of encoder counts are reached.
@@ -189,8 +192,8 @@ void rotateClockwise(int encoderCounts, int speed) {
 
 
 
-	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
-		(nMotorEncoder[backRight]!= 0)){
+	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)){
 
 		// Clear the encoders before using them.
 		clearMotorEncoders();
@@ -211,8 +214,8 @@ void rotateCounterClockwise(int encoderCounts, int speed) {
 
 
 
-	while((nMotorEncoder[frontLeft]!= 0)|| (nMotorEncoder[backLeft]!= 0)|| (nMotorEncoder[frontRight]!= 0)||
-		(nMotorEncoder[backRight]!= 0)){
+	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
+		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)){
 
 		// Clear the encoders before using them.
 		clearMotorEncoders();
@@ -274,6 +277,25 @@ void lowerElevator(int duration, int speed) {
 void stopGrabberMotors() {
 	motor[grabberLeft] = 0;
 	motor[grabberRight] = 0;
+}
+
+
+// Turn the grabber on and leave it running until stopGrabberMotors is called.
+void grabberIn(int speed) {
+
+  // Start the grabber motor to grab an object.
+	motor[grabberLeft] = speed;
+	motor[grabberRight] = speed;
+
+}
+
+// Reverse the grabber and leave it running until stopGrabberMotors is called.
+void grabberOut(int speed) {
+
+	// Reverse the grabber motors to release an object.
+  motor[grabberLeft] = -speed;
+  motor[grabberRight] = -speed;
+
 }
 
 // Grab an object for the specified duration and speed.

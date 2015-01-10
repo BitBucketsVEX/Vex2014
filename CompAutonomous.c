@@ -70,11 +70,8 @@ void pre_auton()
 // Task for the autonomous portion of the competition.
 task autonomous()
 {
-	moveForward(1000, 50);
-	moveBackward(400, 50);
-	translateLeft(900, 50);
-	translateRight(800, 50);
-	moveForward(600,50);
+	moveForward(600, 127);
+	moveBackward(300, 127);
 }
 
 // Task for the driver controlled portion of the competition.
