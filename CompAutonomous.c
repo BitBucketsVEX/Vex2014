@@ -1,5 +1,6 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, dgtl1,  elevBottom,     sensorTouch)
+#pragma config(Sensor, dgtl2,  autoJumper,     sensorTouch)
 #pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_3,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
@@ -50,6 +51,8 @@ Motor Port 10				rightElevator2 			VEX Motor 393 				Right Elevator secondary mo
 #include "Vex_Competition_Includes.c"   //Main competition background code...do not modify!
 #include "AutonomousFunctions.c"
 
+#define ONE_POINT_AUTO true // Set to true to stay near start location
+
 //Global variables
 
 int frontLeftMotorSpeed = 0;
@@ -70,12 +73,21 @@ void pre_auton()
 // Task for the autonomous portion of the competition.
 task autonomous()
 {
-	moveForward(500, 127);
-	moveBackward(100, 100);
-	translateRight(800, 100);
-	moveForward(1100, 100);
-	translateLeft(800, 100);
-	moveBackward(950, 100);
+	moveForward(800, 127); //was 750
+	moveBackward(140, 127); //was 100 and 100
+	if (ONE_POINT_AUTO == false) {
+		if (SensorValue(autoJumper) == 0) { // blue start if jumper out
+			translateRight(760, 100);
+			moveForward(1250, 100);
+			translateLeft(900, 100);
+		} else { // red start if jumper in
+			translateLeft(760, 100);
+			moveForward(1250, 100);
+			translateRight(900, 100);
+		}
+		moveBackward(1100, 100);
+		moveForward(120, 100);
+	}
 }
 
 // Task for the driver controlled portion of the competition.
