@@ -13,6 +13,7 @@
 //		rightElevator2 <- Right secondary elevator motor.
 //    grabberLeft <- Left grabber motor.
 //    grabberRight <- Right grabber motor.
+//		sonarSensor <- Forward-facing ultrasonic sensor module.
 
 // TODO - These functions shouldn't depend on pragmas defined externally.
 //        It makes the library functions dependent on the calling program.
@@ -48,6 +49,16 @@ int maxOfFour(int value1, int value2, int value3, int value4) {
 	}
 	return max;
 }
+
+
+// SENSOR FUNCTIONS
+
+// Read the current distance (in cm) from the ultrasonic sensor.
+int getDistance() {
+	// Return the current distance being read by the sonar sensor.
+	return SensorValue(sonarSensor);
+}
+
 
 // DRIVE COMMANDS
 
@@ -176,7 +187,7 @@ void translateRight(int encoderCounts, int speed) {
 									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
 							< encoderCounts) {
 
-		// Move the robot forward at the specified speed.
+		// Translate right at the specified speed.
 		motor[frontRight] = speed;
 		motor[backRight] = -speed;
 		motor[frontLeft] = speed;
@@ -190,8 +201,6 @@ void translateRight(int encoderCounts, int speed) {
 // Rotate clockwise for the specified number of encoder counts and speed.
 void rotateClockwise(int encoderCounts, int speed) {
 
-
-
 	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
 		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)){
 
@@ -199,10 +208,17 @@ void rotateClockwise(int encoderCounts, int speed) {
 		clearMotorEncoders();
 	}
 
-	motor[frontLeft] = speed;
-	motor[frontRight] = speed;
-	motor[backRight] = - speed;
-	motor[backLeft] = -speed;
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
+
+		motor[frontLeft] = speed;
+		motor[frontRight] = speed;
+		motor[backRight] = speed;
+		motor[backLeft] = speed;
+
+	}
 
 	// Stop the robot.
 	stopRobot();
@@ -212,8 +228,6 @@ void rotateClockwise(int encoderCounts, int speed) {
 // Rotate counterclockwise for the specified number of encoder counts and speed.
 void rotateCounterClockwise(int encoderCounts, int speed) {
 
-
-
 	while((nMotorEncoder[frontLeft]!= 0) || (nMotorEncoder[backLeft]!= 0) ||
 		(nMotorEncoder[frontRight]!= 0) || (nMotorEncoder[backRight]!= 0)){
 
@@ -221,15 +235,73 @@ void rotateCounterClockwise(int encoderCounts, int speed) {
 		clearMotorEncoders();
 	}
 
-	motor[frontLeft] = -speed;
-	motor[frontRight] = -speed;
-	motor[backRight] =  speed;
-	motor[backLeft] = speed;
+	// Run the motors until the specified number of encoder counts are reached.
+	while(maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< encoderCounts) {
+
+		motor[frontLeft] = -speed;
+		motor[frontRight] = -speed;
+		motor[backRight] = -speed;
+		motor[backLeft] = -speed;
+
+	}
 
 	// Stop the robot.
 	stopRobot();
 
 }
+
+// Rotate at the specified speed until the sonar reads an obstacle at the
+// specified distance.
+// A boolean parameter selects clockwise or counterclockwise rotation and
+// there is a parameter for an optional deadzone that allows the robot to
+// rotate for a specified number of encoder counts before the sonar is read.
+// Parameters:
+//		integer sensorDistance -	stop rotating if the sonar readings are <= this value
+//		integer speed -	desired robot speed (0 - 127)
+//		boolean clockwise -	robot will rotate clockwise if true, CCW if false
+//		integer deadzone -	number of encoder counts the robot should rotate before
+//												reading the sonar sensor (0 for no deadzone)
+void rotateWithSonar(int sensorDistance, int speed, bool clockwise, int deadzone) {
+	int directionSign;
+	if (clockwise) {
+		directionSign = 1;
+	} else {
+		directionSign = -1;
+	}
+
+	// Set the motor encoders to zero.
+	clearMotorEncoders();
+
+	// If there is a deadzone value entered, rotate until deadzone count reached.
+	while((maxOfFour(nMotorEncoder[frontRight], nMotorEncoder[backRight],
+									 nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
+							< deadzone) && (deadzone > 0)) {
+
+		motor[frontLeft] = directionSign * speed;
+		motor[frontRight] = directionSign * speed;
+		motor[backRight] = directionSign * speed;
+		motor[backLeft] = directionSign * speed;
+
+	}
+
+	// Rotate the robot until the sensor reads <= the desired sensor distance.
+	// If there are no targets in range, the sonar will read -1.
+	while((getDistance() > sensorDistance) || (getDistance() < 0)) {
+
+		motor[frontLeft] = directionSign * speed;
+		motor[frontRight] = directionSign * speed;
+		motor[backRight] = directionSign * speed;
+		motor[backLeft] = directionSign * speed;
+
+	}
+
+	// Stop the robot.
+	stopRobot();
+
+}
+
 
 
 // ACTUATOR FUNCTIONS
