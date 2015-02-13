@@ -1,7 +1,9 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
-#pragma config(Sensor, dgtl1,  elevBottom,     sensorTouch)
-#pragma config(Sensor, dgtl2,  autoJumper,     sensorTouch)
+#pragma config(Sensor, dgtl1,  autoSelectMSB,  sensorTouch)
+#pragma config(Sensor, dgtl2,  autoSelectLSB,  sensorTouch)
 #pragma config(Sensor, dgtl3,  sonarSensor,    sensorSONAR_cm)
+#pragma config(Sensor, dgtl11, indicatorLED1,  sensorLEDtoVCC)
+#pragma config(Sensor, dgtl12, indicatorLED2,  sensorLEDtoVCC)
 #pragma config(Sensor, I2C_1,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_2,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
 #pragma config(Sensor, I2C_3,  ,               sensorQuadEncoderOnI2CPort,    , AutoAssign)
@@ -74,20 +76,35 @@ void pre_auton()
 // Task for the autonomous portion of the competition.
 task autonomous()
 {
-	moveForward(800, 127); //was 750
-	moveBackward(140, 127); //was 100 and 100
-	if (ONE_POINT_AUTO == false) {
-		if (SensorValue(autoJumper) == 0) { // blue start if jumper out
-			translateRight(760, 100);
-			moveForward(1250, 100);
-			translateLeft(900, 100);
-		} else { // red start if jumper in
-			translateLeft(760, 100);
-			moveForward(1250, 100);
-			translateRight(900, 100);
-		}
+	if ((SensorValue(autoSelectMSB) == 0)&&(SensorValue(autoSelectLSB) == 0)){
+		moveForward(800, 127); //was 750
+		moveBackward(140, 127); //was 100 and 100
+	} else if ((SensorValue(autoSelectMSB) == 0)&&(SensorValue(autoSelectLSB) == 1)){
+		//Blue
+		moveForward(800, 127); //was 750
+		moveBackward(140, 127); //was 100 and 100
+		translateRight(760, 100);
+		moveForward(1250, 100);
+		translateLeft(900, 100);
 		moveBackward(1100, 100);
 		moveForward(120, 100);
+	} else if ((SensorValue(autoSelectMSB) == 1)&&(SensorValue(autoSelectLSB) == 0)){
+		//Red
+		moveForward(800, 127); //was 750
+		moveBackward(140, 127); //was 100 and 100
+		translateLeft(760, 100);
+		moveForward(1250, 100);
+		translateRight(900, 100);
+		moveBackward(1100, 100);
+		moveForward(120, 100);
+	} else if((SensorValue(autoSelectMSB) == 1)&&(SensorValue(autoSelectLSB) == 1)){
+
+
+	moveForward(800, 127)
+	moveBackward(800, 127)
+	rotateWithSonar(50,43,false,90);
+	raiseElevator(600,90);
+	rotateWithSonar(50,43,true,121);
 	}
 }
 
@@ -112,8 +129,7 @@ task usercontrol()
     	motor[leftElevator] = 127;
     	motor[leftElevator2] = 127;
     	motor[rightElevator2] = 127;
-    } else if ((vexRT[Btn6D] == 1) && // lower elevator when button 6D pressed
-      (SensorValue(elevBottom) == 0)) { // and stop at limit switch
+    } else if (vexRT[Btn6D] == 1){
     	motor[rightElevator] = -127;
     	motor[leftElevator] = -127;
     	motor[leftElevator2] = -127;
