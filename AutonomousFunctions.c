@@ -130,7 +130,7 @@ void moveBackward(int encoderCounts, int speed) {
 									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
 							< encoderCounts) {
 
-		// Move the robot forward at the specified speed.
+		// Move the robot backward at the specified speed.
 		motor[frontRight] = speed;
 		motor[backRight] = speed;
 		motor[frontLeft] = -speed;
@@ -213,9 +213,9 @@ void rotateClockwise(int encoderCounts, int speed) {
 									nMotorEncoder[frontLeft], nMotorEncoder[backLeft])
 							< encoderCounts) {
 
-		motor[frontLeft] = speed;
 		motor[frontRight] = speed;
 		motor[backRight] = speed;
+		motor[frontLeft] = speed;
 		motor[backLeft] = speed;
 
 	}
@@ -302,7 +302,22 @@ void rotateWithSonar(int sensorDistance, int speed, bool clockwise, int deadzone
 
 }
 
+// Move the robot forward at the specified speed until the sonar reads the
+// given distance from an obstacle in front of the robot.
+void moveForwardWithSonar(int sensorDistance, int speed) {
 
+	while((getDistance() > sensorDistance) || (getDistance() < 0)) {
+
+		motor[frontRight] = -speed;
+		motor[backRight] = -speed;
+		motor[frontLeft] = speed;
+		motor[backLeft] = speed;
+
+	}
+
+	// Stop the robot.
+	stopRobot();
+}
 
 // ACTUATOR FUNCTIONS
 
