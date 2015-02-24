@@ -100,14 +100,23 @@ task autonomous()
 	} else if((SensorValue(autoSelectMSB) == 1)&&(SensorValue(autoSelectLSB) == 1)){
 
 
-	moveForward(800, 127);
+	moveForward(800, 100);
 	moveBackward(800, 127);
-	raiseElevator(950,90);
-	rotateWithSonar(100,40,false,90);
+	raiseElevator(1000,90);
+	moveBackward(100,100);
+	rotateWithSonar(105,40,false,90);
 	grabberIn(100);
 	moveForwardWithSonar(20,50);
 	stopGrabberMotors();
-	raiseElevator(1000,127);
+	raiseElevator(970,111);
+	moveBackward(100,100);
+	rotateWithSonar(50,40,true,165);
+	rotateClockwise(30,40);
+	moveForwardWithSonar(12,50);
+	lowerElevator(1500,75);
+	grabberOut(100);
+	moveBackward(200,100);
+	stopGrabberMotors();
 
 	}
 }

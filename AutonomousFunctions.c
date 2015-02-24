@@ -356,6 +356,15 @@ void lowerElevator(int duration, int speed) {
 
 	// TODO - Insert code here to lower the elevator.
 
+	// Start motors at specified speed.
+	motor[leftElevator] = -speed;
+	motor[leftElevator2] = -speed;
+	motor[rightElevator] = -speed;
+	motor[rightElevator2] = -speed;
+
+	// Wait for the specified duration.
+	wait1Msec(duration);
+
 	// Stop the motors.
 	stopElevatorMotors();
 }
