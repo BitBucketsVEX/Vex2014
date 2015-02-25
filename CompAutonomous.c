@@ -55,6 +55,10 @@ Motor Port 10				rightElevator2 			VEX Motor 393 				Right Elevator secondary mo
 #include "AutonomousFunctions.c"
 
 #define ONE_POINT_AUTO true // Set to true to stay near start location
+#define AUTOLOADER_STOP 105
+#define AUTOLOADER_APPROACH 20
+#define SKYRISE_BASE 50
+#define SKYRISE_APPROACH 12
 
 //Global variables
 
@@ -101,19 +105,37 @@ task autonomous()
 
 
 	moveForward(800, 100);
-	moveBackward(800, 127);
-	raiseElevator(1000,90);
-	moveBackward(100,100);
-	rotateWithSonar(105,40,false,90);
+	moveBackward(700, 127);
+	raiseElevator(850,90);
+  moveBackward(75,100);
+	rotateWithSonar(105,40,false,165);
 	grabberIn(100);
 	moveForwardWithSonar(20,50);
 	stopGrabberMotors();
-	raiseElevator(970,111);
+	raiseElevator(900,111);
 	moveBackward(100,100);
-	rotateWithSonar(50,40,true,165);
-	rotateClockwise(30,40);
+	rotateWithSonar(50,40,true,300);
+	rotateClockwise(30,115);
 	moveForwardWithSonar(12,50);
-	lowerElevator(1500,75);
+	lowerElevator(1300,75);
+	grabberOut(100);
+	moveBackward(200,100);
+	stopGrabberMotors();
+
+	// Score second Skyrise section.
+	raiseElevator(1150,110);
+	rotateCounterClockwise(200, 40);
+	moveBackward(75,90);
+	rotateWithSonar(105,40,false,100);
+	grabberIn(100);
+	moveForwardWithSonar(20,50);
+	stopGrabberMotors();
+	raiseElevator(1200,111);
+	moveBackward(190,100);
+	rotateWithSonar(50,40,true,300);
+	rotateClockwise(30,60);
+	moveForwardWithSonar(12,50);
+	lowerElevator(900,75);
 	grabberOut(100);
 	moveBackward(200,100);
 	stopGrabberMotors();
